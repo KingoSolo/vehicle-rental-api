@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-
+import { Bookings } from "../../bookings/entities/bookings.entity";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import type { Relation } from "typeorm";
 export enum VehicleCondition{
     USED = 'used',
     NEW  = 'new'
@@ -46,12 +47,15 @@ export class Vehicle{
     vehicleCondition: VehicleCondition
 
     @Column({type:'enum', enum:VehicleType})
-    vehicleType:VehicleCondition
+    vehicleType:VehicleType
 
     @CreateDateColumn()
     createdAt: Date
 
     @UpdateDateColumn()
     updatedAt:Date
+
+    @OneToMany(()=>Bookings,(bookings)=>bookings.vehicle)
+    bookings:Relation<Bookings[]>
 
 }

@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-
+import { Bookings } from "../../bookings/entities/bookings.entity";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import type { Relation } from "typeorm";
 
 export enum UserRole{
     ADMIN = 'admin',
@@ -35,8 +36,8 @@ export class User{
     @UpdateDateColumn()
     updatedAt: Date
 
-    @Column()
-    bookings: any
+    @OneToMany(()=>Bookings,(bookings)=>bookings.user)
+    bookings:Relation<Bookings[]>
    
 
 }
