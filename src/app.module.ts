@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import {ConfigModule, ConfigService} from '@nestjs/config'
 import {TypeOrmModule} from '@nestjs/typeorm'
 import { AuthModule } from './auth/auth.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { UsersModule } from './users/users.module';
 import { VehiclesModule } from './vehicles/vehicles.module';
+import { LoggerMiddleware } from './common/middleware/logger.middleware';
 
 
 @Module({
@@ -19,10 +20,16 @@ import { VehiclesModule } from './vehicles/vehicles.module';
       password: configService.get('DATABASE_PASSWORD'),
       database: configService.get('DATABASE_NAME'),
       entities : [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: configService.get('DB_SYNCHRONIZE') ==='true',
+      synchronize: configService.get('DB_SYNCHRONIZE') ==='false',
       migrations: [__dirname + '/database/migrations/*{.ts,.js}']
 
     })
   })],
 })
-export class AppModule {}
+export class AppModule implements NestModule{
+  configure(consumer:MiddlewareConsumer){
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes('*')
+  }
+}

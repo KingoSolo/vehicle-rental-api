@@ -17,21 +17,12 @@ export class VehiclesService {
         return await this.vehiclesRepository.save(vehicle)
     }
 
-    findAll(){
-        return this.vehiclesRepository.find()
-    }
-
-    async findone(id:string,filters:{
+    findAll(filters:{
         vehicleType?:string,
         isAvailable?:boolean,
         maxPrice?:number
     }){
-        const vehicle =await this.vehiclesRepository.findOne({where:{id}})
         const query  = this.vehiclesRepository.createQueryBuilder('vehicle')
-
-        if(!vehicle){
-            throw new NotFoundException("Vehicle not found")
-        }
 
         if(filters.vehicleType){
             query.andWhere('vehicle.vehicleType = :type',{type:filters.vehicleType})
@@ -45,7 +36,16 @@ export class VehiclesService {
         }
 
         return  query.getMany()
-       
+    }
+
+    async findOne(id:string){
+        const vehicle =await this.vehiclesRepository.findOne({where:{id}})
+      
+
+        if(!vehicle){
+            throw new NotFoundException("Vehicle not found")
+        }
+       return vehicle
     }
 
     async update(id:string,dto:UpdateVehicleDto){
@@ -58,7 +58,7 @@ export class VehiclesService {
     }
 
     async remove(id:string){
-        await this.vehiclesRepository.findOne({where:{id}})
+        await this.findOne(id)
         this.vehiclesRepository.delete(id)
         return ("this vehicle was deleted")
     }

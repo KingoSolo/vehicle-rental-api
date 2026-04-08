@@ -27,7 +27,6 @@ export class AuthService {
             }
             const savedUser = await  this.usersService.create(newUser)
             return this.signToken(savedUser.id,savedUser.email,savedUser.role)
-           
         }
 
         async login(dto:LoginDto){
